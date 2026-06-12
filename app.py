@@ -8,11 +8,13 @@ import requests as req
 
 app = Flask(__name__)
 CORS(app)
+
+DOWNLOAD_FOLDER = "downloads"
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
 @app.route("/")
 def index():
     return send_file("index.html")
-DOWNLOAD_FOLDER = "downloads"
-os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 @app.route("/download", methods=["POST"])
 def download():
@@ -27,8 +29,8 @@ def download():
         ydl_opts = {
             "outtmpl": f"{DOWNLOAD_FOLDER}/{filename}.%(ext)s",
             "quiet": True,
-            "cookiefile": "cookies.txt",
             "merge_output_format": "mp4",
+            "cookiefile": "cookies.txt",
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -46,28 +48,28 @@ def download():
                 with open(filepath, "wb") as f:
                     f.write(r.content)
                 response = send_file(filepath, as_attachment=True, download_name="instagram_photo.jpg")
-os.remove(filepath)
-return response
+                os.remove(filepath)
+                return response
 
-            if quality == "best":
-                format_opt = "bestvideo+bestaudio/best"
-            elif quality == "medium":
-                format_opt = "bestvideo[height<=480]+bestaudio/best[height<=480]"
-            else:
-                format_opt = "worstvideo+worstaudio/worst"
+        if quality == "best":
+            format_opt = "bestvideo+bestaudio/best"
+        elif quality == "medium":
+            format_opt = "bestvideo[height<=480]+bestaudio/best[height<=480]"
+        else:
+            format_opt = "worstvideo+worstaudio/worst"
 
-            ydl_opts["format"] = format_opt
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
-                ydl2.extract_info(url, download=True)
+        ydl_opts["format"] = format_opt
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl2:
+            ydl2.extract_info(url, download=True)
 
         files = glob.glob(f"{DOWNLOAD_FOLDER}/{filename}.*")
         if not files:
             return jsonify({"error": "Could not download"}), 500
 
         filepath = files[0]
-       response = send_file(filepath, as_attachment=True)
-os.remove(filepath)
-return response
+        response = send_file(filepath, as_attachment=True)
+        os.remove(filepath)
+        return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
