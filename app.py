@@ -8,7 +8,9 @@ import requests as req
 
 app = Flask(__name__)
 CORS(app)
-
+@app.route("/")
+def index():
+    return send_file("index.html")
 DOWNLOAD_FOLDER = "downloads"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
