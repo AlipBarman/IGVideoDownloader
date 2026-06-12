@@ -45,7 +45,9 @@ def download():
                 r = req.get(image_url, headers=headers)
                 with open(filepath, "wb") as f:
                     f.write(r.content)
-                return send_file(filepath, as_attachment=True, download_name="instagram_photo.jpg")
+                response = send_file(filepath, as_attachment=True, download_name="instagram_photo.jpg")
+os.remove(filepath)
+return response
 
             if quality == "best":
                 format_opt = "bestvideo+bestaudio/best"
@@ -63,7 +65,9 @@ def download():
             return jsonify({"error": "Could not download"}), 500
 
         filepath = files[0]
-        return send_file(filepath, as_attachment=True)
+       response = send_file(filepath, as_attachment=True)
+os.remove(filepath)
+return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
