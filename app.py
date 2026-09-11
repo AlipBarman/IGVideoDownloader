@@ -32,7 +32,7 @@ def download():
         if quality == "best":
             format_opt = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best"
         elif quality == "medium":
-            format_opt = "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=480]+bestaudio/best[height<=480]"
+            format_opt = "bestvideo[height<=480]+bestaudio/best[height<=480]/best"
         else:
             format_opt = "worstvideo+worstaudio/worst"
 
