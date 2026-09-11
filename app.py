@@ -26,7 +26,7 @@ def download():
         filename = str(uuid.uuid4())
 
         if quality == "best":
-            format_opt = "best[ext=mp4][acodec!=none]/best[acodec!=none]"
+            format_opt = "best[acodec!=none]/best"
         elif quality == "medium":
             format_opt = "best[height<=480][ext=mp4][acodec!=none]/best[height<=480][acodec!=none]/best[acodec!=none]"
         else:
