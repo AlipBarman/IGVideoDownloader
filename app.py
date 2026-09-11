@@ -25,18 +25,11 @@ def download():
     try:
         filename = str(uuid.uuid4())
 
-        if quality == "best":
-            format_opt = "best[acodec!=none]/best"
-        elif quality == "medium":
-            format_opt = "best[height<=480][ext=mp4][acodec!=none]/best[height<=480][acodec!=none]/best[acodec!=none]"
-        else:
-            format_opt = "worst[ext=mp4][acodec!=none]/worst[acodec!=none]"
-
         ydl_opts = {
             "outtmpl": f"{DOWNLOAD_FOLDER}/{filename}.%(ext)s",
             "quiet": True,
-            "format": format_opt,
             "cookiefile": "www.instagram.com_cookies.txt",
+            "format": "best",
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
