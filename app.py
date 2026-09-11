@@ -4,16 +4,12 @@ import yt_dlp
 import os
 import uuid
 import glob
-import requests as req
-import imageio_ffmpeg
 
 app = Flask(__name__)
 CORS(app)
 
 DOWNLOAD_FOLDER = "downloads"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
-
-ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
 
 @app.route("/")
 def index():
@@ -30,19 +26,17 @@ def download():
         filename = str(uuid.uuid4())
 
         if quality == "best":
-            format_opt = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best"
+            format_opt = "best[ext=mp4][acodec!=none]/best[acodec!=none]"
         elif quality == "medium":
-            format_opt = "bestvideo[height<=480]+bestaudio/best[height<=480]/best"
+            format_opt = "best[height<=480][ext=mp4][acodec!=none]/best[height<=480][acodec!=none]/best[acodec!=none]"
         else:
-            format_opt = "worstvideo+worstaudio/worst"
+            format_opt = "worst[ext=mp4][acodec!=none]/worst[acodec!=none]"
 
         ydl_opts = {
             "outtmpl": f"{DOWNLOAD_FOLDER}/{filename}.%(ext)s",
             "quiet": True,
             "format": format_opt,
             "cookiefile": "www.instagram.com_cookies.txt",
-            "ffmpeg_location": ffmpeg_path,
-            "merge_output_format": "mp4",
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
